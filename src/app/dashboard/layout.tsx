@@ -63,11 +63,12 @@ export default function DashboardLayout({
       
       {/* Sidebar (Desktop Only) */}
       <div className="hidden md:flex flex-col w-64 bg-emerald-900 text-white flex-shrink-0">
-        <div className="flex items-center justify-center h-20 border-b border-emerald-800">
-          <div className="flex items-center gap-2">
-            <Heart className="h-6 w-6 text-yellow-400" fill="currentColor" />
-            <span className="text-xl font-bold">LAZISNU Bontang</span>
-          </div>
+        <div className="flex items-center justify-center h-20 border-b border-emerald-800 bg-white">
+          <img 
+            src="https://i.ibb.co.com/DDqSRYBS/lazisnu-nucare.jpg" 
+            alt="LAZISNU NU CARE" 
+            className="w-full h-full object-cover"
+          />
         </div>
         
         <div className="p-4 flex-1">
@@ -124,9 +125,12 @@ export default function DashboardLayout({
         <header className="bg-white shadow-sm h-16 md:h-20 flex items-center justify-between px-4 md:px-6 z-10 shrink-0">
           <div className="flex items-center gap-2">
             {/* Mobile Logo */}
-            <div className="md:hidden flex items-center gap-2 text-emerald-900">
-              <Heart className="h-6 w-6 text-yellow-500" fill="currentColor" />
-              <span className="font-bold">LAZISNU</span>
+            <div className="md:hidden h-10 w-auto">
+              <img 
+                src="https://i.ibb.co.com/DDqSRYBS/lazisnu-nucare.jpg" 
+                alt="LAZISNU NU CARE" 
+                className="h-full w-auto object-contain"
+              />
             </div>
             {/* Desktop Title */}
             <h1 className="text-2xl font-bold text-slate-800 hidden md:block">

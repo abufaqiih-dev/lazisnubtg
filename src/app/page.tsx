@@ -43,12 +43,11 @@ export default function LoginPage() {
 
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-3xl shadow-2xl relative z-10">
         <div className="text-center">
-          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-emerald-100">
-            <Heart className="h-8 w-8 text-emerald-600" fill="currentColor" />
-          </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-slate-900">
-            LAZISNU Bontang
-          </h2>
+          <img 
+            src="https://i.ibb.co.com/DDqSRYBS/lazisnu-nucare.jpg" 
+            alt="LAZISNU NU CARE" 
+            className="w-full h-auto object-contain mx-auto"
+          />
           <p className="mt-2 text-sm text-slate-600">
             Sistem Informasi Manajemen ZIS
           </p>

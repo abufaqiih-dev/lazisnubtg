@@ -1,0 +1,187 @@
+"use client";
+
+import { HandCoins, Users, Heart, TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+import Link from "next/link";
+
+export default function DashboardOverview() {
+  const [stats, setStats] = useState({
+    income: 0,
+    outcome: 0,
+    muzakkiCount: 0,
+    mustahiqCount: 0
+  });
+  const [recentTxs, setRecentTxs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      
+      // Load Tx stats
+      const { data: txs } = await supabase.from('transactions').select('type, amount');
+      let income = 0;
+      let outcome = 0;
+      if (txs) {
+        txs.forEach(t => {
+          if (t.type === 'in') income += Number(t.amount);
+          if (t.type === 'out') outcome += Number(t.amount);
+        });
+      }
+
+      // Load counts
+      const { count: muzakkiCount } = await supabase.from('muzakki').select('*', { count: 'exact', head: true });
+      const { count: mustahiqCount } = await supabase.from('mustahiq').select('*', { count: 'exact', head: true });
+
+      setStats({
+        income,
+        outcome,
+        muzakkiCount: muzakkiCount || 0,
+        mustahiqCount: mustahiqCount || 0
+      });
+
+      // Load recent txs
+      const { data: recent } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+      
+      setRecentTxs(recent || []);
+      setLoading(false);
+    }
+
+    loadData();
+  }, []);
+
+  return (
+    <div className="space-y-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex items-start justify-between">
+          <div>
+            <p className="text-sm font-medium text-slate-500 mb-1">Total Pemasukan ZIS</p>
+            <h3 className="text-2xl font-bold text-slate-800">
+              {loading ? "..." : `Rp ${stats.income.toLocaleString('id-ID')}`}
+            </h3>
+          </div>
+          <div className="bg-emerald-50 p-3 rounded-xl">
+            <HandCoins className="h-6 w-6 text-emerald-600" />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex items-start justify-between">
+          <div>
+            <p className="text-sm font-medium text-slate-500 mb-1">Total Penyaluran</p>
+            <h3 className="text-2xl font-bold text-slate-800">
+              {loading ? "..." : `Rp ${stats.outcome.toLocaleString('id-ID')}`}
+            </h3>
+          </div>
+          <div className="bg-blue-50 p-3 rounded-xl">
+            <Heart className="h-6 w-6 text-blue-600" />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex items-start justify-between">
+          <div>
+            <p className="text-sm font-medium text-slate-500 mb-1">Total Muzakki</p>
+            <h3 className="text-2xl font-bold text-slate-800">
+              {loading ? "..." : stats.muzakkiCount}
+            </h3>
+          </div>
+          <div className="bg-yellow-50 p-3 rounded-xl">
+            <Users className="h-6 w-6 text-yellow-600" />
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex items-start justify-between">
+          <div>
+            <p className="text-sm font-medium text-slate-500 mb-1">Total Mustahiq</p>
+            <h3 className="text-2xl font-bold text-slate-800">
+              {loading ? "..." : stats.mustahiqCount}
+            </h3>
+          </div>
+          <div className="bg-purple-50 p-3 rounded-xl">
+            <Users className="h-6 w-6 text-purple-600" />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent Transactions List */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 lg:col-span-2 overflow-hidden">
+          <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+            <h3 className="text-lg font-bold text-slate-800">Transaksi Terbaru</h3>
+            <Link href="/dashboard/transaksi" className="text-sm font-medium text-emerald-600 hover:text-emerald-700">Lihat Semua</Link>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 text-sm text-slate-500">
+                  <th className="px-6 py-4 font-medium">Keterangan</th>
+                  <th className="px-6 py-4 font-medium">Jenis</th>
+                  <th className="px-6 py-4 font-medium text-right">Nominal</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {loading ? (
+                  <tr>
+                    <td colSpan={3} className="p-8 text-center text-slate-500">Memuat...</td>
+                  </tr>
+                ) : recentTxs.length === 0 ? (
+                  <tr>
+                    <td colSpan={3} className="p-8 text-center text-slate-500">Belum ada transaksi.</td>
+                  </tr>
+                ) : (
+                  recentTxs.map((trx) => (
+                    <tr key={trx.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 text-sm font-medium text-slate-800">{trx.description}</td>
+                      <td className="px-6 py-4 text-sm">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          trx.type === 'in' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                        }`}>
+                          {trx.type === 'in' ? 'Masuk' : 'Keluar'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm font-bold text-right text-slate-800">
+                        Rp {trx.amount.toLocaleString('id-ID')}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <h3 className="text-lg font-bold text-slate-800 mb-4">Pintasan</h3>
+          <div className="space-y-3">
+            <Link href="/dashboard/transaksi" className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition-colors text-slate-700 font-medium">
+              <span className="flex items-center gap-3">
+                <ArrowRight className="h-5 w-5 text-emerald-600" />
+                Catat Transaksi ZIS
+              </span>
+            </Link>
+            <Link href="/dashboard/muzakki" className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition-colors text-slate-700 font-medium">
+              <span className="flex items-center gap-3">
+                <Users className="h-5 w-5 text-slate-500" />
+                Manajemen Muzakki
+              </span>
+            </Link>
+            <Link href="/dashboard/mustahiq" className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition-colors text-slate-700 font-medium">
+              <span className="flex items-center gap-3">
+                <Users className="h-5 w-5 text-slate-500" />
+                Manajemen Mustahiq
+              </span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

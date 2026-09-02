@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Search, Trash2, X, Phone, MapPin } from "lucide-react";
+import { Plus, Search, Trash2, X, Phone, MapPin, Edit } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
 export default function MuzakkiPage() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [profile, setProfile] = useState<{ role: string; id: string } | null>(null);
 
@@ -43,13 +44,36 @@ export default function MuzakkiPage() {
     setLoading(false);
   }
 
+  function openModal() {
+    setEditingId(null);
+    setName("");
+    setPhone("");
+    setAddress("");
+    setIsModalOpen(true);
+  }
+
+  function openEditModal(item: any) {
+    setEditingId(item.id);
+    setName(item.name);
+    setPhone(item.phone || "");
+    setAddress(item.address || "");
+    setIsModalOpen(true);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
 
-    const { error } = await supabase.from('muzakki').insert([
-      { name, phone, address, created_by: profile?.id }
-    ]);
+    let error;
+    if (editingId) {
+      const res = await supabase.from('muzakki').update({ name, phone, address }).eq('id', editingId);
+      error = res.error;
+    } else {
+      const res = await supabase.from('muzakki').insert([
+        { name, phone, address, created_by: profile?.id }
+      ]);
+      error = res.error;
+    }
 
     setSubmitting(false);
     if (!error) {
@@ -59,7 +83,8 @@ export default function MuzakkiPage() {
       setAddress("");
       fetchData();
     } else {
-      alert("Gagal menambahkan data: " + error.message);
+      console.error("Error saving Muzakki:", error);
+      alert(`Gagal menyimpan data: ${error.message}\n${error.details || ''}`);
     }
   }
 
@@ -87,7 +112,7 @@ export default function MuzakkiPage() {
           <p className="text-black text-sm mt-1">Kelola data donatur dan riwayat mereka.</p>
         </div>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={openModal}
           className="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
@@ -122,14 +147,20 @@ export default function MuzakkiPage() {
               <div key={item.id} className="p-4 flex flex-col gap-3">
                 <div className="flex justify-between items-start">
                   <div className="font-bold text-black text-lg">{item.name}</div>
-                  {profile?.role === 'admin' && (
+                  <div className="flex items-center gap-1">
+                    <button 
+                      onClick={() => openEditModal(item)}
+                      className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors shrink-0"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
                     <button 
                       onClick={() => handleDelete(item.id)}
                       className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors shrink-0"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
-                  )}
+                  </div>
                 </div>
                 <div className="text-xs text-black space-y-2 bg-slate-50 p-3 rounded-lg">
                   <div className="flex items-center gap-2">
@@ -183,7 +214,14 @@ export default function MuzakkiPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      {profile?.role === 'admin' && (
+                      <div className="flex items-center justify-end gap-1">
+                        <button 
+                          onClick={() => openEditModal(item)}
+                          className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Edit"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
                         <button 
                           onClick={() => handleDelete(item.id)}
                           className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
@@ -191,7 +229,7 @@ export default function MuzakkiPage() {
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
-                      )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -206,7 +244,7 @@ export default function MuzakkiPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h3 className="text-lg font-bold text-black">Tambah Muzakki</h3>
+              <h3 className="text-lg font-bold text-black">{editingId ? 'Edit Muzakki' : 'Tambah Muzakki'}</h3>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-black">
                 <X className="h-5 w-5" />
               </button>
@@ -254,7 +292,7 @@ export default function MuzakkiPage() {
                 </button>
                 <button 
                   type="submit" 
-                  disabled={submitting}
+                  disabled={submitting || !name}
                   className="px-4 py-2 bg-emerald-700 text-white font-medium hover:bg-emerald-800 rounded-lg transition disabled:opacity-70"
                 >
                   {submitting ? "Menyimpan..." : "Simpan Data"}

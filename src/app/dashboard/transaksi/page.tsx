@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Search, Trash2, X, TrendingUp, TrendingDown } from "lucide-react";
+import { Plus, Search, Trash2, X, TrendingUp, TrendingDown, Edit } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
 export default function TransaksiPage() {
@@ -12,14 +12,19 @@ export default function TransaksiPage() {
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [txType, setTxType] = useState<"in" | "out">("in");
 
   // Form State
   const [amount, setAmount] = useState("");
+  const [amountDisplay, setAmountDisplay] = useState("");
   const [description, setDescription] = useState("");
   const [selectedPerson, setSelectedPerson] = useState("");
   const [peopleList, setPeopleList] = useState<any[]>([]);
   const [submitting, setSubmitting] = useState(false);
+
+  const kategoriPenerimaan = ["Zakat Fitrah", "Zakat Maal", "Infaq", "Sedekah", "Fidyah", "Kifarat", "CSR", "Dana Kemanusiaan", "Lainnya"];
+  const kategoriPenyaluran = ["Fakir", "Miskin", "Amil", "Muallaf", "Riqab", "Gharimin", "Fisabilillah", "Ibnu Sabil", "Bantuan Bencana", "Lainnya"];
 
   const supabase = createClient();
 
@@ -63,13 +68,48 @@ export default function TransaksiPage() {
       const { data } = await supabase.from('mustahiq').select('id, name').order('name');
       setPeopleList(data || []);
     }
-    setSelectedPerson("");
   }
 
+  const formatRupiah = (value: string) => {
+    const numberString = value.replace(/[^,\d]/g, '').toString();
+    const split = numberString.split(',');
+    const sisa = split[0].length % 3;
+    let rupiah = split[0].substr(0, sisa);
+    const ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+    if (ribuan) {
+      const separator = sisa ? '.' : '';
+      rupiah += separator + ribuan.join('.');
+    }
+
+    rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+    return rupiah ? 'Rp. ' + rupiah : '';
+  };
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatRupiah(e.target.value);
+    setAmountDisplay(formatted);
+    const rawValue = formatted.replace(/[^0-9]/g, '');
+    setAmount(rawValue);
+  };
+
   function openModal(type: "in" | "out") {
+    setEditingId(null);
     setTxType(type);
     setAmount("");
-    setDescription("");
+    setAmountDisplay("");
+    setDescription(type === "in" ? kategoriPenerimaan[0] : kategoriPenyaluran[0]);
+    setSelectedPerson("");
+    setIsModalOpen(true);
+  }
+
+  function openEditModal(item: any) {
+    setEditingId(item.id);
+    setTxType(item.type);
+    setAmount(item.amount.toString());
+    setAmountDisplay(formatRupiah(item.amount.toString()));
+    setDescription(item.description);
+    setSelectedPerson(item.type === "in" ? item.muzakki_id || "" : item.mustahiq_id || "");
     setIsModalOpen(true);
   }
 
@@ -81,22 +121,39 @@ export default function TransaksiPage() {
       type: txType,
       amount: parseFloat(amount),
       description,
-      created_by: profile?.id
     };
 
     if (selectedPerson) {
-      if (txType === "in") payload.muzakki_id = selectedPerson;
-      if (txType === "out") payload.mustahiq_id = selectedPerson;
+      if (txType === "in") {
+        payload.muzakki_id = selectedPerson;
+        payload.mustahiq_id = null;
+      }
+      if (txType === "out") {
+        payload.mustahiq_id = selectedPerson;
+        payload.muzakki_id = null;
+      }
+    } else {
+      payload.muzakki_id = null;
+      payload.mustahiq_id = null;
     }
 
-    const { error } = await supabase.from('transactions').insert([payload]);
+    let error;
+    if (editingId) {
+      const res = await supabase.from('transactions').update(payload).eq('id', editingId);
+      error = res.error;
+    } else {
+      payload.created_by = profile?.id;
+      const res = await supabase.from('transactions').insert([payload]);
+      error = res.error;
+    }
 
     setSubmitting(false);
     if (!error) {
       setIsModalOpen(false);
       fetchData();
     } else {
-      alert("Gagal mencatat transaksi: " + error.message);
+      console.error("Error saving transaction:", error);
+      alert(`Gagal menyimpan transaksi: ${error.message}\n${error.details || ''}`);
     }
   }
 
@@ -188,17 +245,22 @@ export default function TransaksiPage() {
                     </div>
                   </div>
                 </div>
-                {profile?.role === 'admin' && (
-                  <div className="flex justify-end pt-2 border-t border-slate-50 mt-1">
-                    <button 
-                      onClick={() => handleDelete(item.id)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors text-xs font-medium"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      Hapus
-                    </button>
-                  </div>
-                )}
+                <div className="flex justify-end gap-2 pt-2 border-t border-slate-50 mt-1">
+                  <button 
+                    onClick={() => openEditModal(item)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors text-xs font-medium"
+                  >
+                    <Edit className="h-3.5 w-3.5" />
+                    Edit
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(item.id)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors text-xs font-medium"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Hapus
+                  </button>
+                </div>
               </div>
             ))
           )}
@@ -247,7 +309,14 @@ export default function TransaksiPage() {
                       Rp {item.amount.toLocaleString('id-ID')}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      {profile?.role === 'admin' && (
+                      <div className="flex items-center justify-end gap-1">
+                        <button 
+                          onClick={() => openEditModal(item)}
+                          className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Edit"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
                         <button 
                           onClick={() => handleDelete(item.id)}
                           className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
@@ -255,7 +324,7 @@ export default function TransaksiPage() {
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
-                      )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -271,7 +340,7 @@ export default function TransaksiPage() {
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden max-h-[90vh] flex flex-col">
             <div className={`p-6 border-b flex justify-between items-center shrink-0 ${txType === 'in' ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100'}`}>
               <h3 className={`text-lg font-bold ${txType === 'in' ? 'text-emerald-800' : 'text-rose-800'}`}>
-                {txType === 'in' ? 'Penerimaan ZIS' : 'Penyaluran ZIS'}
+                {editingId ? 'Edit Transaksi' : (txType === 'in' ? 'Penerimaan ZIS' : 'Penyaluran ZIS')}
               </h3>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-black">
                 <X className="h-5 w-5" />
@@ -282,25 +351,27 @@ export default function TransaksiPage() {
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Nominal (Rp) *</label>
                   <input
-                    type="number"
+                    type="text"
                     required
-                    min="1"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    value={amountDisplay}
+                    onChange={handleAmountChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
-                    placeholder="50000"
+                    placeholder="Rp. 50.000"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Keterangan *</label>
-                  <input
-                    type="text"
+                  <select
                     required
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
-                    placeholder={txType === 'in' ? 'Zakat Maal' : 'Santunan Yatim'}
-                  />
+                  >
+                    <option value="" disabled>-- Pilih Kategori --</option>
+                    {(txType === 'in' ? kategoriPenerimaan : kategoriPenyaluran).map(kategori => (
+                      <option key={kategori} value={kategori}>{kategori}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -330,7 +401,7 @@ export default function TransaksiPage() {
               <button 
                 type="submit" 
                 form="txForm"
-                disabled={submitting}
+                disabled={submitting || !amount}
                 className={`px-4 py-2 text-white font-medium rounded-lg transition disabled:opacity-70 ${
                   txType === 'in' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'
                 }`}

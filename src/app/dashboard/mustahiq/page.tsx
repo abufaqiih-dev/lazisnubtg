@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Search, Trash2, X, Phone, MapPin } from "lucide-react";
+import { Plus, Search, Trash2, X, Phone, MapPin, Edit } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
 export default function MustahiqPage() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [profile, setProfile] = useState<{ role: string; id: string } | null>(null);
 
@@ -44,13 +45,38 @@ export default function MustahiqPage() {
     setLoading(false);
   }
 
+  function openModal() {
+    setEditingId(null);
+    setName("");
+    setPhone("");
+    setAddress("");
+    setCategory("Fakir");
+    setIsModalOpen(true);
+  }
+
+  function openEditModal(item: any) {
+    setEditingId(item.id);
+    setName(item.name);
+    setPhone(item.phone || "");
+    setAddress(item.address || "");
+    setCategory(item.category || "Fakir");
+    setIsModalOpen(true);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
 
-    const { error } = await supabase.from('mustahiq').insert([
-      { name, phone, address, category, created_by: profile?.id }
-    ]);
+    let error;
+    if (editingId) {
+      const res = await supabase.from('mustahiq').update({ name, phone, address, category }).eq('id', editingId);
+      error = res.error;
+    } else {
+      const res = await supabase.from('mustahiq').insert([
+        { name, phone, address, category, created_by: profile?.id }
+      ]);
+      error = res.error;
+    }
 
     setSubmitting(false);
     if (!error) {
@@ -61,7 +87,8 @@ export default function MustahiqPage() {
       setCategory("Fakir");
       fetchData();
     } else {
-      alert("Gagal menambahkan data: " + error.message);
+      console.error("Error saving Mustahiq:", error);
+      alert(`Gagal menyimpan data: ${error.message}\n${error.details || ''}`);
     }
   }
 
@@ -89,7 +116,7 @@ export default function MustahiqPage() {
           <p className="text-black text-sm mt-1">Kelola data penerima manfaat (Asnaf) ZIS.</p>
         </div>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={openModal}
           className="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
@@ -129,14 +156,20 @@ export default function MustahiqPage() {
                       {item.category}
                     </span>
                   </div>
-                  {profile?.role === 'admin' && (
+                  <div className="flex items-center gap-1">
+                    <button 
+                      onClick={() => openEditModal(item)}
+                      className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors shrink-0"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
                     <button 
                       onClick={() => handleDelete(item.id)}
-                      className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                      className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors shrink-0"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
-                  )}
+                  </div>
                 </div>
                 <div className="text-xs text-black space-y-2 bg-slate-50 p-3 rounded-lg">
                   <div className="flex items-center gap-2">
@@ -195,7 +228,14 @@ export default function MustahiqPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      {profile?.role === 'admin' && (
+                      <div className="flex items-center justify-end gap-1">
+                        <button 
+                          onClick={() => openEditModal(item)}
+                          className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Edit"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
                         <button 
                           onClick={() => handleDelete(item.id)}
                           className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
@@ -203,7 +243,7 @@ export default function MustahiqPage() {
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
-                      )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -218,7 +258,7 @@ export default function MustahiqPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden max-h-[90vh] flex flex-col">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h3 className="text-lg font-bold text-black">Tambah Mustahiq</h3>
+              <h3 className="text-lg font-bold text-black">{editingId ? 'Edit Mustahiq' : 'Tambah Mustahiq'}</h3>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-black">
                 <X className="h-5 w-5" />
               </button>
@@ -284,7 +324,7 @@ export default function MustahiqPage() {
               <button 
                 type="submit" 
                 form="mustahiqForm"
-                disabled={submitting}
+                disabled={submitting || !name}
                 className="px-4 py-2 bg-emerald-700 text-white font-medium hover:bg-emerald-800 rounded-lg transition disabled:opacity-70"
               >
                 {submitting ? "Menyimpan..." : "Simpan Data"}

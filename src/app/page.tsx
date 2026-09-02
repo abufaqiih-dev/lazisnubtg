@@ -44,7 +44,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-3xl shadow-2xl relative z-10">
         <div className="text-center">
           <img 
-            src="https://i.ibb.co.com/DDqSRYBS/lazisnu-nucare.jpg" 
+            src="https://i.ibb.co.com/x8zydZz1/Chat-GPT-Image-Sep-2-2026-08-52-41-AM.png" 
             alt="LAZISNU NU CARE" 
             className="w-full h-auto object-contain mx-auto"
           />

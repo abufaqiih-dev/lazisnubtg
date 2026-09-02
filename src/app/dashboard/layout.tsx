@@ -65,7 +65,7 @@ export default function DashboardLayout({
       <div className="hidden md:flex flex-col w-64 bg-emerald-900 text-white flex-shrink-0">
         <div className="flex items-center justify-center h-20 border-b border-emerald-800 bg-white">
           <img 
-            src="https://i.ibb.co.com/DDqSRYBS/lazisnu-nucare.jpg" 
+            src="https://i.ibb.co.com/x8zydZz1/Chat-GPT-Image-Sep-2-2026-08-52-41-AM.png" 
             alt="LAZISNU NU CARE" 
             className="w-full h-full object-cover"
           />
@@ -127,7 +127,7 @@ export default function DashboardLayout({
             {/* Mobile Logo */}
             <div className="md:hidden h-10 w-auto">
               <img 
-                src="https://i.ibb.co.com/DDqSRYBS/lazisnu-nucare.jpg" 
+                src="https://i.ibb.co.com/x8zydZz1/Chat-GPT-Image-Sep-2-2026-08-52-41-AM.png" 
                 alt="LAZISNU NU CARE" 
                 className="h-full w-auto object-contain"
               />

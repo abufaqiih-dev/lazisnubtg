@@ -48,7 +48,7 @@ export default function LoginPage() {
             alt="LAZISNU NU CARE" 
             className="w-full h-auto object-contain mx-auto"
           />
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-2 text-sm text-black">
             Sistem Informasi Manajemen ZIS
           </p>
         </div>

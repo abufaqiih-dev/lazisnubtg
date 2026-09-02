@@ -63,8 +63,8 @@ export default function DashboardOverview() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
         <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm border border-slate-100 flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <p className="text-[11px] md:text-sm font-medium text-slate-500 mb-1 truncate">Total Pemasukan ZIS</p>
-            <h3 className="text-sm md:text-2xl font-bold text-slate-800 truncate">
+            <p className="text-[11px] md:text-sm font-medium text-black mb-1 truncate">Total Pemasukan ZIS</p>
+            <h3 className="text-sm md:text-2xl font-bold text-black truncate">
               {loading ? "..." : `Rp ${stats.income.toLocaleString('id-ID')}`}
             </h3>
           </div>
@@ -75,8 +75,8 @@ export default function DashboardOverview() {
 
         <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm border border-slate-100 flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <p className="text-[11px] md:text-sm font-medium text-slate-500 mb-1 truncate">Total Penyaluran</p>
-            <h3 className="text-sm md:text-2xl font-bold text-slate-800 truncate">
+            <p className="text-[11px] md:text-sm font-medium text-black mb-1 truncate">Total Penyaluran</p>
+            <h3 className="text-sm md:text-2xl font-bold text-black truncate">
               {loading ? "..." : `Rp ${stats.outcome.toLocaleString('id-ID')}`}
             </h3>
           </div>
@@ -87,8 +87,8 @@ export default function DashboardOverview() {
 
         <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm border border-slate-100 flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <p className="text-[11px] md:text-sm font-medium text-slate-500 mb-1 truncate">Total Muzakki</p>
-            <h3 className="text-base md:text-2xl font-bold text-slate-800 truncate">
+            <p className="text-[11px] md:text-sm font-medium text-black mb-1 truncate">Total Muzakki</p>
+            <h3 className="text-base md:text-2xl font-bold text-black truncate">
               {loading ? "..." : stats.muzakkiCount}
             </h3>
           </div>
@@ -99,8 +99,8 @@ export default function DashboardOverview() {
         
         <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm border border-slate-100 flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <p className="text-[11px] md:text-sm font-medium text-slate-500 mb-1 truncate">Total Mustahiq</p>
-            <h3 className="text-base md:text-2xl font-bold text-slate-800 truncate">
+            <p className="text-[11px] md:text-sm font-medium text-black mb-1 truncate">Total Mustahiq</p>
+            <h3 className="text-base md:text-2xl font-bold text-black truncate">
               {loading ? "..." : stats.mustahiqCount}
             </h3>
           </div>
@@ -114,13 +114,13 @@ export default function DashboardOverview() {
         {/* Recent Transactions List */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-            <h3 className="text-lg font-bold text-slate-800">Transaksi Terbaru</h3>
+            <h3 className="text-lg font-bold text-black">Transaksi Terbaru</h3>
             <Link href="/dashboard/transaksi" className="text-sm font-medium text-emerald-600 hover:text-emerald-700">Lihat Semua</Link>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-sm text-slate-500">
+                <tr className="bg-slate-50 text-sm text-black">
                   <th className="px-6 py-4 font-medium">Keterangan</th>
                   <th className="px-6 py-4 font-medium">Jenis</th>
                   <th className="px-6 py-4 font-medium text-right">Nominal</th>
@@ -129,16 +129,16 @@ export default function DashboardOverview() {
               <tbody className="divide-y divide-slate-100">
                 {loading ? (
                   <tr>
-                    <td colSpan={3} className="p-8 text-center text-slate-500">Memuat...</td>
+                    <td colSpan={3} className="p-8 text-center text-black">Memuat...</td>
                   </tr>
                 ) : recentTxs.length === 0 ? (
                   <tr>
-                    <td colSpan={3} className="p-8 text-center text-slate-500">Belum ada transaksi.</td>
+                    <td colSpan={3} className="p-8 text-center text-black">Belum ada transaksi.</td>
                   </tr>
                 ) : (
                   recentTxs.map((trx) => (
                     <tr key={trx.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-4 text-sm font-medium text-slate-800">{trx.description}</td>
+                      <td className="px-6 py-4 text-sm font-medium text-black">{trx.description}</td>
                       <td className="px-6 py-4 text-sm">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           trx.type === 'in' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
@@ -146,7 +146,7 @@ export default function DashboardOverview() {
                           {trx.type === 'in' ? 'Masuk' : 'Keluar'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm font-bold text-right text-slate-800">
+                      <td className="px-6 py-4 text-sm font-bold text-right text-black">
                         Rp {trx.amount.toLocaleString('id-ID')}
                       </td>
                     </tr>

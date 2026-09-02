@@ -83,8 +83,8 @@ export default function MuzakkiPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">Manajemen Muzakki</h2>
-          <p className="text-slate-500 text-sm mt-1">Kelola data donatur dan riwayat mereka.</p>
+          <h2 className="text-2xl font-bold text-black">Manajemen Muzakki</h2>
+          <p className="text-black text-sm mt-1">Kelola data donatur dan riwayat mereka.</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
@@ -114,14 +114,14 @@ export default function MuzakkiPage() {
         {/* Mobile View */}
         <div className="md:hidden divide-y divide-slate-100">
           {loading ? (
-            <div className="p-8 text-center text-slate-500 text-sm">Memuat data...</div>
+            <div className="p-8 text-center text-black text-sm">Memuat data...</div>
           ) : filteredData.length === 0 ? (
-            <div className="p-8 text-center text-slate-500 text-sm">Belum ada data Muzakki.</div>
+            <div className="p-8 text-center text-black text-sm">Belum ada data Muzakki.</div>
           ) : (
             filteredData.map((item) => (
               <div key={item.id} className="p-4 flex flex-col gap-3">
                 <div className="flex justify-between items-start">
-                  <div className="font-bold text-slate-800 text-lg">{item.name}</div>
+                  <div className="font-bold text-black text-lg">{item.name}</div>
                   {profile?.role === 'admin' && (
                     <button 
                       onClick={() => handleDelete(item.id)}
@@ -131,7 +131,7 @@ export default function MuzakkiPage() {
                     </button>
                   )}
                 </div>
-                <div className="text-xs text-slate-600 space-y-2 bg-slate-50 p-3 rounded-lg">
+                <div className="text-xs text-black space-y-2 bg-slate-50 p-3 rounded-lg">
                   <div className="flex items-center gap-2">
                     <Phone className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                     <span>{item.phone || '-'}</span>
@@ -150,7 +150,7 @@ export default function MuzakkiPage() {
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 text-sm text-slate-500">
+              <tr className="bg-slate-50 text-sm text-black">
                 <th className="px-6 py-4 font-medium">Nama Donatur</th>
                 <th className="px-6 py-4 font-medium">No. Telepon</th>
                 <th className="px-6 py-4 font-medium">Alamat</th>
@@ -160,23 +160,23 @@ export default function MuzakkiPage() {
             <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
-                  <td colSpan={4} className="p-8 text-center text-slate-500">Memuat data...</td>
+                  <td colSpan={4} className="p-8 text-center text-black">Memuat data...</td>
                 </tr>
               ) : filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="p-8 text-center text-slate-500">Belum ada data Muzakki.</td>
+                  <td colSpan={4} className="p-8 text-center text-black">Belum ada data Muzakki.</td>
                 </tr>
               ) : (
                 filteredData.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-medium text-slate-800">{item.name}</td>
-                    <td className="px-6 py-4 text-sm text-slate-600">
+                    <td className="px-6 py-4 font-medium text-black">{item.name}</td>
+                    <td className="px-6 py-4 text-sm text-black">
                       <div className="flex items-center gap-2">
                         <Phone className="h-3 w-3 text-slate-400" />
                         {item.phone || '-'}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-600">
+                    <td className="px-6 py-4 text-sm text-black">
                       <div className="flex items-center gap-2 max-w-xs truncate">
                         <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
                         {item.address || '-'}
@@ -206,8 +206,8 @@ export default function MuzakkiPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h3 className="text-lg font-bold text-slate-800">Tambah Muzakki</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+              <h3 className="text-lg font-bold text-black">Tambah Muzakki</h3>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-black">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -248,7 +248,7 @@ export default function MuzakkiPage() {
                 <button 
                   type="button" 
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-lg transition"
+                  className="px-4 py-2 text-black font-medium hover:bg-slate-100 rounded-lg transition"
                 >
                   Batal
                 </button>

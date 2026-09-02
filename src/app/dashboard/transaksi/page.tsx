@@ -121,8 +121,8 @@ export default function TransaksiPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">Transaksi ZIS</h2>
-          <p className="text-slate-500 text-sm mt-1">Catat dan pantau arus dana masuk dan keluar.</p>
+          <h2 className="text-2xl font-bold text-black">Transaksi ZIS</h2>
+          <p className="text-black text-sm mt-1">Catat dan pantau arus dana masuk dan keluar.</p>
         </div>
         <div className="flex gap-2">
           <button 
@@ -161,9 +161,9 @@ export default function TransaksiPage() {
         {/* Mobile View */}
         <div className="md:hidden divide-y divide-slate-100">
           {loading ? (
-            <div className="p-8 text-center text-slate-500 text-sm">Memuat data...</div>
+            <div className="p-8 text-center text-black text-sm">Memuat data...</div>
           ) : filteredData.length === 0 ? (
-            <div className="p-8 text-center text-slate-500 text-sm">Belum ada riwayat transaksi.</div>
+            <div className="p-8 text-center text-black text-sm">Belum ada riwayat transaksi.</div>
           ) : (
             filteredData.map((item) => (
               <div key={item.id} className="p-4 flex flex-col gap-3">
@@ -172,8 +172,8 @@ export default function TransaksiPage() {
                     <div className="text-[11px] text-slate-400 font-medium">
                       {new Date(item.transaction_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </div>
-                    <div className="font-bold text-slate-800 leading-tight">{item.description}</div>
-                    <div className="text-xs text-slate-500">
+                    <div className="font-bold text-black leading-tight">{item.description}</div>
+                    <div className="text-xs text-black">
                       {item.type === 'in' ? item.muzakki?.name || 'Tanpa Relasi' : item.mustahiq?.name || 'Tanpa Relasi'}
                     </div>
                   </div>
@@ -183,7 +183,7 @@ export default function TransaksiPage() {
                     }`}>
                       {item.type === 'in' ? 'Masuk' : 'Keluar'}
                     </span>
-                    <div className="font-bold text-slate-800 text-sm">
+                    <div className="font-bold text-black text-sm">
                       Rp {item.amount.toLocaleString('id-ID')}
                     </div>
                   </div>
@@ -208,7 +208,7 @@ export default function TransaksiPage() {
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 text-sm text-slate-500">
+              <tr className="bg-slate-50 text-sm text-black">
                 <th className="px-6 py-4 font-medium">Tanggal</th>
                 <th className="px-6 py-4 font-medium">Keterangan</th>
                 <th className="px-6 py-4 font-medium">Relasi</th>
@@ -220,20 +220,20 @@ export default function TransaksiPage() {
             <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-slate-500">Memuat data...</td>
+                  <td colSpan={6} className="p-8 text-center text-black">Memuat data...</td>
                 </tr>
               ) : filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-slate-500">Belum ada riwayat transaksi.</td>
+                  <td colSpan={6} className="p-8 text-center text-black">Belum ada riwayat transaksi.</td>
                 </tr>
               ) : (
                 filteredData.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 text-sm text-slate-600">
+                    <td className="px-6 py-4 text-sm text-black">
                       {new Date(item.transaction_date).toLocaleDateString('id-ID')}
                     </td>
-                    <td className="px-6 py-4 font-medium text-slate-800">{item.description}</td>
-                    <td className="px-6 py-4 text-sm text-slate-600">
+                    <td className="px-6 py-4 font-medium text-black">{item.description}</td>
+                    <td className="px-6 py-4 text-sm text-black">
                       {item.type === 'in' ? item.muzakki?.name || '-' : item.mustahiq?.name || '-'}
                     </td>
                     <td className="px-6 py-4">
@@ -243,7 +243,7 @@ export default function TransaksiPage() {
                         {item.type === 'in' ? 'Masuk' : 'Keluar'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-bold text-right text-slate-800">
+                    <td className="px-6 py-4 font-bold text-right text-black">
                       Rp {item.amount.toLocaleString('id-ID')}
                     </td>
                     <td className="px-6 py-4 text-right">
@@ -273,7 +273,7 @@ export default function TransaksiPage() {
               <h3 className={`text-lg font-bold ${txType === 'in' ? 'text-emerald-800' : 'text-rose-800'}`}>
                 {txType === 'in' ? 'Penerimaan ZIS' : 'Penyaluran ZIS'}
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-black">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -323,7 +323,7 @@ export default function TransaksiPage() {
               <button 
                 type="button" 
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-lg transition"
+                className="px-4 py-2 text-black font-medium hover:bg-slate-100 rounded-lg transition"
               >
                 Batal
               </button>

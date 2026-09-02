@@ -133,7 +133,7 @@ export default function DashboardLayout({
               />
             </div>
             {/* Desktop Title */}
-            <h1 className="text-2xl font-bold text-slate-800 hidden md:block">
+            <h1 className="text-2xl font-bold text-black hidden md:block">
               {navigation.find(n => n.href === pathname)?.name || "Dashboard"}
             </h1>
           </div>
@@ -151,7 +151,7 @@ export default function DashboardLayout({
             {/* Mobile Logout Button */}
             <button 
               onClick={handleLogout}
-              className="md:hidden p-2 text-slate-500 hover:text-rose-600 transition-colors"
+              className="md:hidden p-2 text-black hover:text-rose-600 transition-colors"
             >
               <LogOut className="h-5 w-5" />
             </button>
@@ -175,7 +175,7 @@ export default function DashboardLayout({
                 key={item.name}
                 href={item.href}
                 className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${
-                  isActive ? "text-emerald-700" : "text-slate-500 hover:text-emerald-600"
+                  isActive ? "text-emerald-700" : "text-black hover:text-emerald-600"
                 }`}
               >
                 <Icon className={`h-5 w-5 ${isActive ? "text-emerald-700" : ""}`} />

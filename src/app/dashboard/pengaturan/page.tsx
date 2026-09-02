@@ -38,21 +38,21 @@ export default function PengaturanPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">Pengaturan Akun</h2>
-          <p className="text-slate-500 text-sm mt-1">Kelola hak akses pengguna (Admin & Amil).</p>
+          <h2 className="text-2xl font-bold text-black">Pengaturan Akun</h2>
+          <p className="text-black text-sm mt-1">Kelola hak akses pengguna (Admin & Amil).</p>
         </div>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
           <ShieldCheck className="h-6 w-6 text-emerald-600" />
-          <h3 className="font-bold text-slate-800">Daftar Pengguna Sistem</h3>
+          <h3 className="font-bold text-black">Daftar Pengguna Sistem</h3>
         </div>
         
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 text-sm text-slate-500">
+              <tr className="bg-slate-50 text-sm text-black">
                 <th className="px-6 py-4 font-medium">Nama Pengguna</th>
                 <th className="px-6 py-4 font-medium">Role / Peran</th>
                 <th className="px-6 py-4 font-medium">Tgl Terdaftar</th>
@@ -61,17 +61,17 @@ export default function PengaturanPage() {
             <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
-                  <td colSpan={3} className="p-8 text-center text-slate-500">Memuat data...</td>
+                  <td colSpan={3} className="p-8 text-center text-black">Memuat data...</td>
                 </tr>
               ) : profiles.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="p-8 text-center text-slate-500">Belum ada profil.</td>
+                  <td colSpan={3} className="p-8 text-center text-black">Belum ada profil.</td>
                 </tr>
               ) : (
                 profiles.map((p) => (
                   <tr key={p.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-medium text-slate-800 flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center font-bold text-xs uppercase text-slate-500">
+                    <td className="px-6 py-4 font-medium text-black flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center font-bold text-xs uppercase text-black">
                         {p.full_name?.substring(0, 2) || '?'}
                       </div>
                       {p.full_name}
@@ -83,7 +83,7 @@ export default function PengaturanPage() {
                         {p.role}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-600">
+                    <td className="px-6 py-4 text-sm text-black">
                       {new Date(p.created_at).toLocaleDateString('id-ID')}
                     </td>
                   </tr>

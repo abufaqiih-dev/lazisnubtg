@@ -110,9 +110,9 @@ export default function DashboardOverview() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {/* Recent Transactions List */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 lg:col-span-2 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="p-6 border-b border-slate-100 flex justify-between items-center">
             <h3 className="text-lg font-bold text-slate-800">Transaksi Terbaru</h3>
             <Link href="/dashboard/transaksi" className="text-sm font-medium text-emerald-600 hover:text-emerald-700">Lihat Semua</Link>
@@ -154,31 +154,6 @@ export default function DashboardOverview() {
                 )}
               </tbody>
             </table>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-          <h3 className="text-lg font-bold text-slate-800 mb-4">Pintasan</h3>
-          <div className="space-y-3">
-            <Link href="/dashboard/transaksi" className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition-colors text-slate-700 font-medium">
-              <span className="flex items-center gap-3">
-                <ArrowRight className="h-5 w-5 text-emerald-600" />
-                Catat Transaksi ZIS
-              </span>
-            </Link>
-            <Link href="/dashboard/muzakki" className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition-colors text-slate-700 font-medium">
-              <span className="flex items-center gap-3">
-                <Users className="h-5 w-5 text-slate-500" />
-                Manajemen Muzakki
-              </span>
-            </Link>
-            <Link href="/dashboard/mustahiq" className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition-colors text-slate-700 font-medium">
-              <span className="flex items-center gap-3">
-                <Users className="h-5 w-5 text-slate-500" />
-                Manajemen Mustahiq
-              </span>
-            </Link>
           </div>
         </div>
       </div>

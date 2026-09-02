@@ -158,7 +158,54 @@ export default function TransaksiPage() {
           </div>
         </div>
         
-        <div className="overflow-x-auto">
+        {/* Mobile View */}
+        <div className="md:hidden divide-y divide-slate-100">
+          {loading ? (
+            <div className="p-8 text-center text-slate-500 text-sm">Memuat data...</div>
+          ) : filteredData.length === 0 ? (
+            <div className="p-8 text-center text-slate-500 text-sm">Belum ada riwayat transaksi.</div>
+          ) : (
+            filteredData.map((item) => (
+              <div key={item.id} className="p-4 flex flex-col gap-3">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-1">
+                    <div className="text-[11px] text-slate-400 font-medium">
+                      {new Date(item.transaction_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </div>
+                    <div className="font-bold text-slate-800 leading-tight">{item.description}</div>
+                    <div className="text-xs text-slate-500">
+                      {item.type === 'in' ? item.muzakki?.name || 'Tanpa Relasi' : item.mustahiq?.name || 'Tanpa Relasi'}
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                      item.type === 'in' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                    }`}>
+                      {item.type === 'in' ? 'Masuk' : 'Keluar'}
+                    </span>
+                    <div className="font-bold text-slate-800 text-sm">
+                      Rp {item.amount.toLocaleString('id-ID')}
+                    </div>
+                  </div>
+                </div>
+                {profile?.role === 'admin' && (
+                  <div className="flex justify-end pt-2 border-t border-slate-50 mt-1">
+                    <button 
+                      onClick={() => handleDelete(item.id)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors text-xs font-medium"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Hapus
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop View */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50 text-sm text-slate-500">
